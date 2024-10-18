@@ -1,7 +1,7 @@
 import { Command } from "commander";
 
 import { loadEnv } from "@/config/env-file";
-import { BlueServer } from "@/internals/server";
+import { BlueServer } from "@/server";
 import { argSchema } from "@/config/arg-config";
 
 const command = new Command();
