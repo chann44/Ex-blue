@@ -7,6 +7,8 @@ import { Logger } from "pino";
 import { UserHandler } from "./handlers/user-handler";
 import { Environment } from "@/pkg/types";
 import { ErrorHandlerMiddleware } from "@/pkg/error-middleware";
+import { Metrics } from "@/pkg/metrics";
+import { Registry } from "prom-client";
 
 export class BlueServer {
   public router: Router;
@@ -14,10 +16,14 @@ export class BlueServer {
   private app: Application;
   private server: Server;
   private args: IArgs;
+  private registry: Registry;
   userHandler: UserHandler;
+  metricsHandler: Metrics;
   errorMiddleware: ErrorHandlerMiddleware;
 
   constructor(args: IArgs) {
+    // setups
+    this.registry = new Registry();
     this.router = Router();
     this.args = args;
     this.logger = setupLogger(
@@ -28,10 +34,11 @@ export class BlueServer {
     this.app = express();
     this.router = Router();
     this.errorMiddleware = new ErrorHandlerMiddleware(this.logger);
-
     this.userHandler = new UserHandler(this.router, this.logger);
-    this.app.use(this.router);
+    this.metricsHandler = new Metrics(this.registry, this.router);
 
+    // use statements
+    this.app.use(this.router);
     this.app.use(this.errorMiddleware.getMiddleware());
   }
 

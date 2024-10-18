@@ -1,0 +1,43 @@
+version: "3"
+
+configs:
+  prometheus_config:
+    file: ./promethes/config.yml
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    restart: "on-failure"
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - 9090:9090
+    configs:
+      - source: prometheus_config
+        target: /etc/prometheus/config.yml
+    volumes:
+      - prometheus-data:/prometheus
+    command: "--config.file=/etc/prometheus/config.yml"
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana-oss:latest
+    container_name: grafana
+    ports:
+      - 3000:3000
+    volumes:
+      - grafana-data:/var/lib/grafana
+    restart: unless-stopped
+    depends_on:
+      - prometheus
+volumes:
+  prometheus-data:
+    driver: local
+  grafana-data:
+    driver: local
