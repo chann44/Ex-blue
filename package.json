@@ -5,8 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start:dev": "ts-node -r tsconfig-paths/register ./src/cmd/main.ts -p 8080 -e local -l debug --env-file .env.dev",
-    "start": "ts-node -r tsconfig-paths/register ./src/cmd/main.ts -p 8080 -e production -l info"
+    "start:dev": "ts-node -r tsconfig-paths/register ./src/cmd/main.ts start -p 8080 -e local -l debug --env-file .env.dev",
+    "start": "ts-node -r tsconfig-paths/register ./src/cmd/main.ts start -p 8080 -e production -l info",
+    "hs": "ts-node -r tsconfig-paths/register ./src/cmd/main.ts hs",
+    "stop": "ts-node -r tsconfig-paths/register ./src/cmd/main.ts stop"
   },
   "keywords": [],
   "author": "",
@@ -23,7 +25,6 @@
     "express": "^4.21.1",
     "figlet": "^1.8.0",
     "pino": "^9.5.0",
-    "pino-pretty": "^11.3.0",
     "ts-node": "^10.9.2",
     "zod": "^3.23.8"
   },
