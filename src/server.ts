@@ -18,12 +18,13 @@ export class BlueServer {
   private args: IArgs;
   private registry: Registry;
   userHandler: UserHandler;
-  metricsHandler: Metrics;
+  metrics: Metrics;
   errorMiddleware: ErrorHandlerMiddleware;
 
   constructor(args: IArgs) {
     // setups
     this.registry = new Registry();
+    this.metrics = new Metrics(this.registry);
     this.router = Router();
     this.args = args;
     this.logger = setupLogger(
@@ -35,7 +36,6 @@ export class BlueServer {
     this.router = Router();
     this.errorMiddleware = new ErrorHandlerMiddleware(this.logger);
     this.userHandler = new UserHandler(this.router, this.logger);
-    this.metricsHandler = new Metrics(this.registry, this.router);
 
     // use statements
     this.app.use(this.router);
@@ -54,7 +54,6 @@ export class BlueServer {
       console.log("Closing http server.");
       this.server.close(() => {
         console.log("Http server closed.");
-        // boolean means [force], see in mongoose doc
       });
     });
   }

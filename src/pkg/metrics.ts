@@ -1,16 +1,13 @@
-import { Response, Router } from "express";
 import { Counter, Registry, Summary, collectDefaultMetrics } from "prom-client";
 
 export class Metrics {
-  private router: Router;
   public registry: Registry;
 
   public requestCount: Counter;
   public requestsDuration: Summary;
 
-  constructor(registry: Registry, router: Router) {
+  constructor(registry: Registry) {
     this.registry = registry;
-    this.router = router;
 
     collectDefaultMetrics({
       register: this.registry,
@@ -27,17 +24,11 @@ export class Metrics {
     });
 
     this.registerMetrics();
-    this.router.get("/metrics", this.sendMetrics.bind(this));
+    // this.router.get("/metrics", this.sendMetrics.bind(this));
   }
 
   private registerMetrics() {
     this.registry.registerMetric(this.requestCount);
     this.registry.registerMetric(this.requestsDuration);
-  }
-
-  public async sendMetrics(_req: Request, res: Response) {
-    res.setHeader("Content-Type", this.registry.contentType);
-    const metrics = await this.registry.metrics();
-    res.send(metrics);
   }
 }
